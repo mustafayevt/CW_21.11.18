@@ -10,35 +10,53 @@ namespace CW_21._11._18
     {
         static void Main(string[] args)
         {
-            MyList  <int>list = new MyList<int>();
-            list.Add(5);
-            list.Add(6);
-            list.Show();
-            Console.WriteLine(list.Contains(5));
+            MyList<int, int> keyValuePairs = new MyList<int, int>();
+            keyValuePairs[1] = 5;
+            Console.WriteLine(keyValuePairs[1]);
         }
     }
-    class MyList<T>
+    class MyList<T, R>
     {
-        public T []GetT=new T[0];
-        public void Add(T tmp)
+        T[] key = new T[0];
+        R[] value = new R[0];
+        public void Add(T key, R value)
         {
-            Array.Resize(ref GetT, GetT.Length + 1);
-            GetT[GetT.Length - 1] = tmp;
-        }
-        public bool Contains(T tmp)
-        {
-            for (int i = 0; i < GetT.Length; i++)
+            for (int i = 0; i < this.key.Length; i++)
             {
-                if (GetT[i].Equals(tmp)) return true;
+                if (this.key[i].Equals(key)) throw new Exception("Key is already taken");
             }
-            return false;
+            Array.Resize(ref this.key, this.key.Length + 1);
+            this.key[this.key.Length - 1] = key;
+            Array.Resize(ref this.value, this.value.Length + 1);
+            this.value[this.value.Length - 1] = value;
         }
-        public  void Show()
+
+
+        public object this[T index]
         {
-            for (int i = 0; i < GetT.Length; i++)
+            get
             {
-                Console.WriteLine(GetT[i]);
+                for (int i = 0; i < this.key.Length; i++)
+                {
+                    if (this.key[i].Equals(index)) return value[i];
+                }
+                throw new Exception("Not found");
+            }
+            set
+            {
+                if (!key.Contains(index))
+                {
+                    Array.Resize(ref this.value, this.value.Length + 1);
+                    this.value[this.value.Length - 1] = (R)value;
+                    Array.Resize(ref this.key, this.key.Length + 1);
+                    this.key[this.key.Length - 1] = index;
+                }
+                else
+                {
+                    this.value[Array.IndexOf(key, index)] = (R)value;
+                }
             }
         }
     }
+
 }
